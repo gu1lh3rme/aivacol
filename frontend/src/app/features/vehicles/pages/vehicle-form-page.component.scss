@@ -1,0 +1,22 @@
+.vehicle-form {
+  padding: 24px;
+
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    align-items: center;
+  }
+
+  img {
+    max-width: 220px;
+    border-radius: 8px;
+  }
+
+  footer {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+}

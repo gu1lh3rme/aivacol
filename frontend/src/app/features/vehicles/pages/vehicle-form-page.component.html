@@ -1,0 +1,61 @@
+<section class="vehicle-form" aria-label="Cadastro e edição de veículo">
+  <header>
+    <h1>{{ isEdit() ? 'Editar Veículo' : 'Novo Veículo' }}</h1>
+  </header>
+
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Placa</mat-label>
+      <input matInput formControlName="plate" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Marca</mat-label>
+      <mat-select formControlName="brandId">
+        @for (brand of brands(); track brand.id) {
+          <mat-option [value]="brand.id">{{ brand.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Modelo</mat-label>
+      <mat-select formControlName="modelId" [disabled]="loadingModels()">
+        @for (model of models(); track model.id) {
+          <mat-option [value]="model.id">{{ model.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ano</mat-label>
+      <input matInput type="number" formControlName="year" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cor</mat-label>
+      <input matInput formControlName="color" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Quilometragem</mat-label>
+      <input matInput type="number" formControlName="mileage" />
+    </mat-form-field>
+
+    <label>
+      Imagem (opcional)
+      <input type="file" accept="image/*" (change)="onImageSelected($event)" />
+    </label>
+
+    @if (imagePreview()) {
+      <img [src]="imagePreview()" alt="Prévia da imagem do veículo" />
+    }
+
+    <footer>
+      <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="loading()">
+        {{ loading() ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </footer>
+  </form>
+</section>

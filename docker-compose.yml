@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: aivacol-redis
+    ports:
+      - '6379:6379'
+
+  backend:
+    build:
+      context: ./backend
+    container_name: aivacol-backend
+    environment:
+      PORT: 3000
+      DB_PATH: aivacol.db
+      JWT_SECRET: access_secret
+      JWT_REFRESH_SECRET: refresh_secret
+      AUTH_EMAIL: admin@aivacol.com
+      AUTH_PASSWORD: Aivacol@123
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+    ports:
+      - '3000:3000'
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: aivacol-frontend
+    depends_on:
+      - backend
+    ports:
+      - '4200:80'
