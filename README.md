@@ -1,6 +1,6 @@
 # Aivacol - Plataforma de Gestão de Frota
 
-Projeto full stack com **frontend Angular 18 (standalone + signals)** e **backend NestJS 11 (TypeORM + JWT + Redis cache)** para gestão de veículos.
+Projeto full stack com **frontend Angular 19 (standalone + signals)** e **backend NestJS 11 (TypeORM + JWT + Redis cache)** para gestão de veículos.
 
 ## Estrutura
 
@@ -16,7 +16,7 @@ Projeto full stack com **frontend Angular 18 (standalone + signals)** e **backen
 ## Tecnologias
 
 ### Frontend
-- Angular 18 standalone
+- Angular 19 standalone
 - Signals + RxJS
 - Angular Router com lazy loading
 - HttpClient + interceptor JWT com refresh
