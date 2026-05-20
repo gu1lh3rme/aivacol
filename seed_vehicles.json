@@ -1,0 +1,47 @@
+[
+  {
+    "plate": "BRA2E19",
+    "brand": "Toyota",
+    "model": "Corolla",
+    "year": 2022,
+    "color": "Prata",
+    "mileage": 25400,
+    "imageUrl": ""
+  },
+  {
+    "plate": "ABC1D23",
+    "brand": "Volkswagen",
+    "model": "T-Cross",
+    "year": 2021,
+    "color": "Branco",
+    "mileage": 33000,
+    "imageUrl": ""
+  },
+  {
+    "plate": "XYZ9A88",
+    "brand": "Fiat",
+    "model": "Strada",
+    "year": 2023,
+    "color": "Vermelho",
+    "mileage": 12000,
+    "imageUrl": ""
+  },
+  {
+    "plate": "QWE4R56",
+    "brand": "Chevrolet",
+    "model": "Onix",
+    "year": 2020,
+    "color": "Preto",
+    "mileage": 45600,
+    "imageUrl": ""
+  },
+  {
+    "plate": "HJK7L90",
+    "brand": "Hyundai",
+    "model": "HB20",
+    "year": 2022,
+    "color": "Cinza",
+    "mileage": 18500,
+    "imageUrl": ""
+  }
+]
