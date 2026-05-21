@@ -1,5 +1,4 @@
 .vehicles-page {
-  padding: 24px;
   display: grid;
   gap: 16px;
 
@@ -7,16 +6,34 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    h1 {
+      margin: 0;
+    }
   }
 
   .filters {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 12px;
+    padding: 12px;
+    border-radius: 16px;
+    background: #fffaf0;
+    border: 1px solid rgba(255, 159, 28, 0.2);
   }
 
   table {
     width: 100%;
     overflow: auto;
+    background: #ffffff;
+    border-radius: 14px;
+  }
+
+  .mat-mdc-header-row {
+    background: #f5f1e5;
+  }
+
+  .mat-mdc-row:nth-child(even) {
+    background: #fffdf8;
   }
 }

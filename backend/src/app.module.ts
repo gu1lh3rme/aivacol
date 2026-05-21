@@ -1,5 +1,5 @@
 import { CacheModule } from '@nestjs/cache-manager';
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,25 +19,61 @@ import { VehiclesModule } from './vehicles/vehicles.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'sqlite' as const,
-        database: configService.get<string>('DB_PATH') ?? 'aivacol.db',
-        entities: [Brand, ModelEntity, Vehicle],
-        synchronize: true,
-      }),
+      useFactory: (configService: ConfigService) => {
+        const dbPortRaw = configService.get<string>('DB_PORT');
+        const dbPort = dbPortRaw ? Number(dbPortRaw) : undefined;
+        const dbInstance = configService.get<string>('DB_INSTANCE');
+
+        return {
+          type: 'mssql' as const,
+          host: configService.get<string>('DB_HOST') ?? 'localhost',
+          ...(Number.isFinite(dbPort) ? { port: dbPort } : {}),
+          username: configService.get<string>('DB_USERNAME') ?? 'sa',
+          password: configService.get<string>('DB_PASSWORD') ?? 'admin',
+          database: configService.get<string>('DB_DATABASE') ?? 'aivacol',
+          options: {
+            encrypt: false,
+            trustServerCertificate: true,
+            ...(dbInstance ? { instanceName: dbInstance } : {}),
+          },
+          entities: [Brand, ModelEntity, Vehicle],
+          synchronize: true,
+        };
+      },
     }),
     CacheModule.registerAsync({
       isGlobal: true,
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        store: (await redisStore({
-          socket: {
-            host: configService.get<string>('REDIS_HOST') ?? 'localhost',
-            port: Number(configService.get<string>('REDIS_PORT') ?? 6379),
-          },
-        })) as never,
-        ttl: 60_000,
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const logger = new Logger('CacheConfig');
+        const cacheDriver =
+          configService.get<string>('CACHE_DRIVER')?.toLowerCase() ?? 'memory';
+
+        if (cacheDriver !== 'redis') {
+          return {
+            ttl: 60_000,
+          };
+        }
+
+        try {
+          return {
+            store: (await redisStore({
+              socket: {
+                host: configService.get<string>('REDIS_HOST') ?? 'localhost',
+                port: Number(configService.get<string>('REDIS_PORT') ?? 6379),
+              },
+            })) as never,
+            ttl: 60_000,
+          };
+        } catch (error) {
+          logger.warn(
+            'Falha ao conectar no Redis. Usando cache em memoria para este boot.',
+          );
+          return {
+            ttl: 60_000,
+          };
+        }
+      },
     }),
     TypeOrmModule.forFeature([Brand, ModelEntity, Vehicle]),
     AuthModule,

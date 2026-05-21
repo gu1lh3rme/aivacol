@@ -25,7 +25,7 @@ Projeto full stack com **frontend Angular 19 (standalone + signals)** e **backen
 
 ### Backend
 - NestJS 11
-- TypeORM + SQLite
+- TypeORM + SQL Server
 - JWT (access + refresh)
 - Redis (cache de listagem de veículos)
 - DTOs com class-validator
@@ -54,7 +54,7 @@ Projeto full stack com **frontend Angular 19 (standalone + signals)** e **backen
 ### Pré-requisitos
 - Node.js 20+
 - npm 10+
-- Redis local (ou Docker)
+- SQL Server local (SQLEXPRESS)
 
 ### 1) Backend
 
@@ -87,11 +87,19 @@ Arquivo: `backend/.env`
 
 ```env
 PORT=3000
-DB_PATH=aivacol.db
+DB_HOST=localhost
+# Optional. Leave empty when connecting by fixed TCP port.
+DB_INSTANCE=
+DB_PORT=1433
+DB_USERNAME=sa
+DB_PASSWORD=admin
+DB_DATABASE=aivacol
 JWT_SECRET=access_secret
 JWT_REFRESH_SECRET=refresh_secret
 AUTH_EMAIL=admin@aivacol.com
 AUTH_PASSWORD=Aivacol@123
+CACHE_DRIVER=memory
+# Production only (Redis)
 REDIS_HOST=localhost
 REDIS_PORT=6379
 ```
@@ -106,6 +114,7 @@ docker compose up --build
 Serviços:
 - Frontend: `http://localhost:4200`
 - Backend: `http://localhost:3000`
+- SQL Server: `localhost:1433`
 - Redis: `localhost:6379`
 
 ## Testes e qualidade
@@ -131,7 +140,7 @@ npm run test -- --watch=false --browsers=ChromeHeadless
 - **State por service + signals** no frontend para simplicidade e boa escalabilidade por feature.
 - **JWT com refresh token** no backend e renovação automática no interceptor para UX contínua.
 - **Cache Redis** na listagem de veículos para reduzir custo de consultas repetidas.
-- **TypeORM com SQLite** para setup rápido local e integração simples com seed.
+- **TypeORM com SQL Server** para manter compatibilidade com ambientes corporativos e cenários de produção.
 
 ## Melhorias futuras
 

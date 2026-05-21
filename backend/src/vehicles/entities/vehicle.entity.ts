@@ -13,13 +13,13 @@ export class Vehicle {
   @Column()
   brandId!: number;
 
-  @ManyToOne(() => Brand, { eager: true, onDelete: 'RESTRICT' })
+  @ManyToOne(() => Brand, { eager: true, onDelete: 'NO ACTION' })
   brand!: Brand;
 
   @Column()
   modelId!: number;
 
-  @ManyToOne(() => ModelEntity, { eager: true, onDelete: 'RESTRICT' })
+  @ManyToOne(() => ModelEntity, { eager: true, onDelete: 'NO ACTION' })
   model!: ModelEntity;
 
   @Column('int')

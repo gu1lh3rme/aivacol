@@ -1,22 +1,53 @@
 @use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 @include mat.core();
+
 $theme: mat.define-theme(
   (
     color: (
       theme-type: light,
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
+      primary: mat.$yellow-palette,
+      tertiary: mat.$orange-palette,
     ),
   )
 );
 
 :root {
+  --brand-yellow: #f6cf3f;
+  --brand-orange: #ff9f1c;
+  --graphite-900: #262626;
+  --graphite-700: #3d3d3d;
+  --surface-soft: #fffaf0;
+
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+
   @include mat.all-component-themes($theme);
-  font-family: Inter, Roboto, Arial, sans-serif;
 }
 
 body {
   margin: 0;
-  background: #f5f7fb;
+  min-height: 100vh;
+  color: var(--graphite-900);
+  background:
+    radial-gradient(circle at 5% 0%, rgba(246, 207, 63, 0.22), transparent 36%),
+    radial-gradient(circle at 100% 100%, rgba(255, 159, 28, 0.2), transparent 30%),
+    #f7f7f5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.mat-mdc-card {
+  border-radius: 16px !important;
 }

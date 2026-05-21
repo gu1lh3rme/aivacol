@@ -1,0 +1,100 @@
+.home-page {
+  display: grid;
+  gap: 18px;
+}
+
+.hero {
+  background: linear-gradient(135deg, #f6cf3f 0%, #ff9f1c 100%);
+  border-radius: 18px;
+  padding: 24px;
+  color: #2c2c2c;
+
+  .eyebrow {
+    margin: 0;
+    font-size: 0.78rem;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.8;
+  }
+
+  h1 {
+    margin: 6px 0 8px;
+  }
+
+  p {
+    margin: 0;
+    max-width: 560px;
+  }
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.kpi-card {
+  background: #fffaf0;
+  border: 1px solid rgba(255, 159, 28, 0.24);
+
+  mat-icon {
+    color: #ff9f1c;
+    background: #ffe9c2;
+    border-radius: 10px;
+    padding: 6px;
+    width: 26px;
+    height: 26px;
+  }
+
+  h2 {
+    margin: 16px 0 6px;
+  }
+
+  p,
+  small {
+    margin: 0;
+    color: #474747;
+  }
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+
+  mat-card {
+    background: #ffffff;
+    border: 1px solid rgba(38, 38, 38, 0.08);
+    border-radius: 16px;
+    padding: 6px;
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 10px;
+  }
+}
+
+.progress-item {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 900px) {
+  .insights-grid {
+    grid-template-columns: 1fr;
+  }
+}

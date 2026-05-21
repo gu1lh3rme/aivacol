@@ -2,10 +2,17 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: #f3f6fb;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 208, 57, 0.22), transparent 36%),
+    radial-gradient(circle at 85% 95%, rgba(255, 159, 28, 0.24), transparent 34%),
+    #f4f3f0;
 
   mat-card {
     width: min(420px, 90vw);
+    background: #fffdf7;
+    border: 1px solid rgba(255, 159, 28, 0.24);
+    box-shadow: 0 16px 42px rgba(38, 38, 38, 0.12);
   }
 
   form {
@@ -16,5 +23,11 @@
 
   .error {
     color: #b3261e;
+    margin: 0;
+  }
+
+  button[mat-flat-button] {
+    height: 44px;
+    font-weight: 700;
   }
 }

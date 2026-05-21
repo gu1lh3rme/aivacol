@@ -9,7 +9,19 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
-    loadChildren: () => import('./features/vehicles/vehicles.routes').then((m) => m.VEHICLE_ROUTES),
+    loadComponent: () =>
+      import('./shared/layouts/auth-shell/auth-shell.component').then((m) => m.AuthShellComponent),
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      {
+        path: 'home',
+        loadComponent: () => import('./features/home/pages/home-page.component').then((m) => m.HomePageComponent),
+      },
+      {
+        path: 'vehicles',
+        loadChildren: () => import('./features/vehicles/vehicles.routes').then((m) => m.VEHICLE_ROUTES),
+      },
+    ],
   },
   { path: '**', redirectTo: '' },
 ];

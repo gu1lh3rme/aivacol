@@ -47,7 +47,7 @@ export class LoginPageComponent {
 
     this.authService.login(email, password, rememberMe).subscribe({
       next: () => {
-        void this.router.navigate(['/vehicles']);
+        void this.router.navigate(['/home']);
       },
       error: () => {
         this.errorMessage.set('Não foi possível autenticar. Verifique os dados informados.');

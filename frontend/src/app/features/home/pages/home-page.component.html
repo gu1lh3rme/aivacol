@@ -1,0 +1,42 @@
+<section class="home-page" aria-label="Dashboard inicial da plataforma">
+  <header class="hero">
+    <p class="eyebrow">Visão Geral</p>
+    <h1>Dashboard da Plataforma</h1>
+    <p>Acompanhe indicadores essenciais da operação em tempo real.</p>
+  </header>
+
+  <div class="kpi-grid">
+    @for (card of cards; track card.title) {
+      <mat-card class="kpi-card">
+        <mat-icon>{{ card.icon }}</mat-icon>
+        <h2>{{ card.value }}</h2>
+        <p>{{ card.title }}</p>
+        <small>{{ card.trend }}</small>
+      </mat-card>
+    }
+  </div>
+
+  <div class="insights-grid">
+    <mat-card>
+      <h3>Saúde por Área</h3>
+      @for (item of healthByArea; track item.area) {
+        <div class="progress-item">
+          <div>
+            <strong>{{ item.area }}</strong>
+            <span>{{ item.value }}%</span>
+          </div>
+          <mat-progress-bar [value]="item.value" mode="determinate" />
+        </div>
+      }
+    </mat-card>
+
+    <mat-card>
+      <h3>Resumo Diário</h3>
+      <ul>
+        <li>6 solicitações de veículos aprovadas hoje.</li>
+        <li>2 checklists de inspeção pendentes até 18:00.</li>
+        <li>1 alerta de revisão programada para amanhã.</li>
+      </ul>
+    </mat-card>
+  </div>
+</section>
