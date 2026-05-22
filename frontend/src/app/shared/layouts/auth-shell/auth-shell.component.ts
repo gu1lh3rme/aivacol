@@ -9,6 +9,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-auth-shell',
@@ -29,6 +30,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class AuthShellComponent {
   readonly authService = inject(AuthService);
+  readonly themeService = inject(ThemeService);
   private readonly breakpointObserver = inject(BreakpointObserver);
 
   readonly isMobile = toSignal(
@@ -44,5 +46,9 @@ export class AuthShellComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }

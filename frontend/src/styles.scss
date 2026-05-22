@@ -3,10 +3,20 @@
 
 @include mat.core();
 
-$theme: mat.define-theme(
+$light-theme: mat.define-theme(
   (
     color: (
       theme-type: light,
+      primary: mat.$yellow-palette,
+      tertiary: mat.$orange-palette,
+    ),
+  )
+);
+
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
       primary: mat.$yellow-palette,
       tertiary: mat.$orange-palette,
     ),
@@ -19,20 +29,51 @@ $theme: mat.define-theme(
   --graphite-900: #262626;
   --graphite-700: #3d3d3d;
   --surface-soft: #fffaf0;
+  --text-primary: #262626;
+  --text-muted: #5f5f5f;
+  --body-bg:
+    radial-gradient(circle at 5% 0%, rgba(246, 207, 63, 0.22), transparent 36%),
+    radial-gradient(circle at 100% 100%, rgba(255, 159, 28, 0.2), transparent 30%),
+    #f7f7f5;
+  --input-bg: linear-gradient(180deg, #fffefb 0%, #fff9ee 100%);
+  --input-shadow: 0 6px 16px rgba(38, 38, 38, 0.06);
+  --input-border: rgba(255, 159, 28, 0.34);
+  --input-focus: #f0b11a;
+  --surface-card: #ffffff;
+  --surface-card-soft: #fffdf8;
+  --surface-panel: rgba(255, 250, 240, 0.88);
+  --border-soft: rgba(255, 159, 28, 0.2);
 
   font-family: 'Manrope', 'Segoe UI', sans-serif;
 
-  @include mat.all-component-themes($theme);
+  @include mat.all-component-themes($light-theme);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  color: var(--graphite-900);
-  background:
-    radial-gradient(circle at 5% 0%, rgba(246, 207, 63, 0.22), transparent 36%),
-    radial-gradient(circle at 100% 100%, rgba(255, 159, 28, 0.2), transparent 30%),
-    #f7f7f5;
+  color: var(--text-primary);
+  background: var(--body-bg);
+}
+
+body.dark-theme {
+  --text-primary: #f5f1e3;
+  --text-muted: #b8b4a7;
+  --body-bg:
+    radial-gradient(circle at 0% 0%, rgba(246, 207, 63, 0.08), transparent 35%),
+    radial-gradient(circle at 100% 100%, rgba(255, 159, 28, 0.1), transparent 30%),
+    linear-gradient(155deg, #151515 0%, #1c1c1c 100%);
+  --input-bg: linear-gradient(180deg, #2a2a2a 0%, #242424 100%);
+  --input-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  --input-border: rgba(255, 216, 77, 0.24);
+  --input-focus: #ffd84d;
+  --surface-card: #232323;
+  --surface-card-soft: #292929;
+  --surface-panel: rgba(39, 39, 39, 0.9);
+  --border-soft: rgba(255, 216, 77, 0.18);
+  color-scheme: dark;
+
+  @include mat.all-component-colors($dark-theme);
 }
 
 h1,
@@ -58,24 +99,24 @@ h6 {
 
 .mat-mdc-form-field .mat-mdc-text-field-wrapper {
   border-radius: 14px;
-  background: linear-gradient(180deg, #fffefb 0%, #fff9ee 100%);
+  background: var(--input-bg);
   transition: box-shadow 160ms ease, transform 160ms ease;
 }
 
 .mat-mdc-form-field:hover .mat-mdc-text-field-wrapper {
-  box-shadow: 0 6px 16px rgba(38, 38, 38, 0.06);
+  box-shadow: var(--input-shadow);
 }
 
 .mat-mdc-form-field .mdc-notched-outline__leading,
 .mat-mdc-form-field .mdc-notched-outline__notch,
 .mat-mdc-form-field .mdc-notched-outline__trailing {
-  border-color: rgba(255, 159, 28, 0.34) !important;
+  border-color: var(--input-border) !important;
 }
 
 .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
 .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
 .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
-  border-color: #f0b11a !important;
+  border-color: var(--input-focus) !important;
   border-width: 2px !important;
 }
 
@@ -84,7 +125,7 @@ h6 {
 .mat-mdc-form-field .mat-mdc-select-value-text,
 .mat-mdc-form-field input.mat-mdc-input-element,
 .mat-mdc-form-field textarea.mat-mdc-input-element {
-  color: #303030 !important;
+  color: var(--text-primary) !important;
 }
 
 .mat-mdc-form-field .mat-mdc-floating-label {
@@ -93,6 +134,10 @@ h6 {
 
 .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
   color: #de8a00 !important;
+}
+
+body.dark-theme .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+  color: #ffd84d !important;
 }
 
 .mat-mdc-form-field-subscript-wrapper {
@@ -119,4 +164,125 @@ h6 {
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
+}
+
+body.dark-theme .shell-toolbar {
+  background: rgba(36, 36, 36, 0.88);
+  border-bottom-color: rgba(255, 216, 77, 0.2);
+  color: #f5f1e3;
+}
+
+body.dark-theme .shell-toolbar .theme-toggle {
+  background: rgba(255, 216, 77, 0.14);
+}
+
+body.dark-theme .login-container {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255, 208, 57, 0.12), transparent 30%),
+    radial-gradient(circle at 86% 96%, rgba(255, 159, 28, 0.14), transparent 34%),
+    linear-gradient(140deg, #1a1a1a 0%, #262626 100%);
+}
+
+body.dark-theme .login-container .login-card,
+body.dark-theme .vehicles-page .table-shell,
+body.dark-theme .vehicles-page .vehicles-table,
+body.dark-theme .vehicles-page .insight-strip mat-card,
+body.dark-theme .vehicles-page .cards-shell .vehicle-card,
+body.dark-theme .vehicle-form form,
+body.dark-theme .home-page .kpi-card,
+body.dark-theme .home-page .insights-grid mat-card {
+  background: var(--surface-card) !important;
+  border-color: var(--border-soft) !important;
+  color: var(--text-primary);
+}
+
+body.dark-theme .vehicles-page .filters,
+body.dark-theme .vehicle-form form {
+  background: var(--surface-panel) !important;
+}
+
+body.dark-theme .vehicles-page .mat-mdc-header-row {
+  background: linear-gradient(90deg, #2f2f2f 0%, #3a3a3a 100%);
+}
+
+body.dark-theme .vehicles-page .mat-mdc-header-cell,
+body.dark-theme .vehicles-page .mat-mdc-cell,
+body.dark-theme .home-page .summary-item strong,
+body.dark-theme .home-page .bar-meta {
+  color: var(--text-primary);
+}
+
+body.dark-theme .vehicles-page .mat-mdc-row:nth-child(even) {
+  background: var(--surface-card-soft);
+}
+
+body.dark-theme .vehicles-page .mat-mdc-row:hover {
+  background: #363636;
+}
+
+body.dark-theme .vehicles-page .plate-cell span {
+  background: #3a3a3a;
+  color: #f7e9b9;
+}
+
+body.dark-theme .vehicles-page .status-available {
+  background: rgba(18, 122, 61, 0.24);
+  color: #92e5b5;
+}
+
+body.dark-theme .vehicles-page .status-maintenance {
+  background: rgba(155, 100, 0, 0.28);
+  color: #ffd78d;
+}
+
+body.dark-theme .vehicles-page .status-archived {
+  background: rgba(122, 122, 122, 0.3);
+  color: #d2d2d2;
+}
+
+body.dark-theme .home-page p,
+body.dark-theme .home-page small,
+body.dark-theme .home-page .summary-item span,
+body.dark-theme .vehicles-page .subtitle,
+body.dark-theme .vehicles-page .insight-strip span,
+body.dark-theme .vehicles-page .cards-shell p,
+body.dark-theme .vehicles-page .cards-shell dt,
+body.dark-theme .history-page .metric-card span,
+body.dark-theme .history-page .timeline-item p,
+body.dark-theme .history-page .timeline-item small,
+body.dark-theme .catalog-page .hero p:last-child {
+  color: var(--text-muted) !important;
+}
+
+body.dark-theme .catalog-page .editor-card,
+body.dark-theme .catalog-page .list-card,
+body.dark-theme .history-page .metric-card,
+body.dark-theme .history-page .timeline-card,
+body.dark-theme .history-page .timeline-item {
+  background: var(--surface-card) !important;
+  border-color: var(--border-soft) !important;
+  color: var(--text-primary) !important;
+}
+
+body.dark-theme .catalog-page .catalog-table,
+body.dark-theme .catalog-page .mat-mdc-table,
+body.dark-theme .catalog-page .mat-mdc-row,
+body.dark-theme .catalog-page .mat-mdc-cell,
+body.dark-theme .catalog-page .mat-mdc-header-cell {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  border-bottom-color: rgba(255, 216, 77, 0.12) !important;
+}
+
+body.dark-theme .catalog-page .mat-mdc-header-row {
+  background: linear-gradient(90deg, #2f2f2f 0%, #3a3a3a 100%) !important;
+}
+
+body.dark-theme .catalog-page .actions-cell .mat-icon,
+body.dark-theme .history-page .metric-card .mat-icon {
+  color: #ffbd3f !important;
+}
+
+body.dark-theme .history-page .timeline-item .time {
+  color: #ffcf63 !important;
 }

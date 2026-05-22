@@ -1,4 +1,14 @@
 <main class="login-container">
+  <button
+    mat-icon-button
+    type="button"
+    class="theme-toggle"
+    (click)="toggleTheme()"
+    [attr.aria-label]="themeService.isDark() ? 'Ativar tema claro' : 'Ativar tema escuro'"
+  >
+    <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+
   <section class="login-showcase" aria-label="Apresentação da plataforma">
     <div class="brand-head">
       <span class="brand-mark">AV</span>

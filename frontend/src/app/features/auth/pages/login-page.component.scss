@@ -7,6 +7,16 @@
     padding: clamp(18px, 4vw, 44px);
     background: radial-gradient(circle at 12% 8%, rgba(255, 208, 57, .32), transparent 30%), radial-gradient(circle at 86% 96%, rgba(255, 159, 28, .28), transparent 34%), linear-gradient(140deg, #f3f2ed 0%, #fbf6e6 100%);
 
+    .theme-toggle {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        background: rgba(255, 255, 255, .68);
+        color: #2f2f2f;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 159, 28, .22);
+    }
+
     .login-showcase {
         align-self: stretch;
         display: grid;

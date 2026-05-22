@@ -5,8 +5,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-login-page',
@@ -17,6 +19,7 @@ import { AuthService } from '../../../core/services/auth.service';
     MatCardModule,
     MatCheckboxModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
   ],
   templateUrl: './login-page.component.html',
@@ -26,6 +29,7 @@ import { AuthService } from '../../../core/services/auth.service';
 export class LoginPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   readonly authService = inject(AuthService);
+  readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
 
   readonly errorMessage = signal('');
@@ -53,5 +57,9 @@ export class LoginPageComponent {
         this.errorMessage.set('Não foi possível autenticar. Verifique os dados informados.');
       },
     });
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }
