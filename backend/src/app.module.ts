@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { redisStore } from 'cache-manager-redis-store';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { User } from './auth/user.entity';
 import { Brand } from './brands/entities/brand.entity';
 import { BrandsModule } from './brands/brands.module';
 import { ModelEntity } from './models/entities/model.entity';
@@ -36,7 +37,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
             trustServerCertificate: true,
             ...(dbInstance ? { instanceName: dbInstance } : {}),
           },
-          entities: [Brand, ModelEntity, Vehicle],
+          entities: [Brand, ModelEntity, Vehicle, User],
           synchronize: true,
         };
       },
@@ -75,7 +76,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
         }
       },
     }),
-    TypeOrmModule.forFeature([Brand, ModelEntity, Vehicle]),
+    TypeOrmModule.forFeature([Brand, ModelEntity, Vehicle, User]),
     AuthModule,
     BrandsModule,
     ModelsModule,

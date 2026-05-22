@@ -1,7 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
 
 interface JwtPayload {
   sub: number;
@@ -13,22 +16,22 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async login(email: string, password: string) {
-    const allowedEmail =
-      this.configService.get<string>('AUTH_EMAIL') ?? 'admin@aivacol.com';
-    const plainPassword =
-      this.configService.get<string>('AUTH_PASSWORD') ?? 'Aivacol@123';
-    const hash = await bcrypt.hash(plainPassword, 10);
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await this.userRepository.findOne({
+      where: { email: normalizedEmail },
+    });
 
-    const isAllowed =
-      email === allowedEmail && (await bcrypt.compare(password, hash));
+    const isAllowed = user && (await bcrypt.compare(password, user.password));
     if (!isAllowed) {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    return this.createTokens({ sub: 1, email });
+    return this.createTokens({ sub: user.id, email: user.email });
   }
 
   async refresh(refreshToken: string) {

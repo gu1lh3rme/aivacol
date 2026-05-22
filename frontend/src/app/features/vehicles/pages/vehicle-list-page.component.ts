@@ -10,6 +10,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { debounceTime } from 'rxjs';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { VehiclesApiService } from '../services/vehicles-api.service';
 import { VehiclesStateService } from '../services/vehicles-state.service';
 
 @Component({
@@ -33,6 +34,7 @@ import { VehiclesStateService } from '../services/vehicles-state.service';
 export class VehicleListPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly api = inject(VehiclesApiService);
   readonly state = inject(VehiclesStateService);
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
@@ -74,5 +76,23 @@ export class VehicleListPageComponent {
 
   editVehicle(id: number) {
     void this.router.navigate(['/vehicles', id, 'edit']);
+  }
+
+  deleteVehicle(id: number, plate: string) {
+    const confirmed = window.confirm(
+      `Deseja realmente excluir o veículo ${plate}?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.loading.set(true);
+    this.api
+      .remove(id)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe(() => {
+        this.state.updateFilters({ page: this.state.filters().page });
+      });
   }
 }

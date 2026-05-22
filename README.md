@@ -69,7 +69,7 @@ API: `http://localhost:3000`
 
 Credenciais padrão:
 - email: `admin@aivacol.com`
-- senha: `Aivacol@123`
+- senha: `aivacol@123`
 
 ### 2) Frontend
 
@@ -97,7 +97,7 @@ DB_DATABASE=aivacol
 JWT_SECRET=access_secret
 JWT_REFRESH_SECRET=refresh_secret
 AUTH_EMAIL=admin@aivacol.com
-AUTH_PASSWORD=Aivacol@123
+AUTH_PASSWORD=aivacol@123
 CACHE_DRIVER=memory
 # Production only (Redis)
 REDIS_HOST=localhost

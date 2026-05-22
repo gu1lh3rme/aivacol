@@ -22,6 +22,15 @@
     gap: 6px;
     color: #3e3e3e;
     font-weight: 600;
+
+    input[type='file'] {
+      border: 1px dashed rgba(255, 159, 28, 0.45);
+      background: #fff9ee;
+      border-radius: 12px;
+      padding: 10px;
+      color: #3d3d3d;
+      cursor: pointer;
+    }
   }
 
   img {

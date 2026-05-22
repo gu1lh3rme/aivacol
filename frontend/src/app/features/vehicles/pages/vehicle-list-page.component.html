@@ -56,6 +56,9 @@
             <button mat-icon-button (click)="editVehicle(row.id)" aria-label="Editar veículo">
               <mat-icon>edit</mat-icon>
             </button>
+            <button mat-icon-button (click)="deleteVehicle(row.id, row.plate)" aria-label="Excluir veículo">
+              <mat-icon>delete</mat-icon>
+            </button>
           </td>
         </ng-container>
 

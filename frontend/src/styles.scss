@@ -52,6 +52,53 @@ h6 {
   border-radius: 16px !important;
 }
 
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fffefb 0%, #fff9ee 100%);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.mat-mdc-form-field:hover .mat-mdc-text-field-wrapper {
+  box-shadow: 0 6px 16px rgba(38, 38, 38, 0.06);
+}
+
+.mat-mdc-form-field .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-color: rgba(255, 159, 28, 0.34) !important;
+}
+
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #f0b11a !important;
+  border-width: 2px !important;
+}
+
+.mat-mdc-form-field .mat-mdc-floating-label,
+.mat-mdc-form-field .mat-mdc-form-field-infix,
+.mat-mdc-form-field .mat-mdc-select-value-text,
+.mat-mdc-form-field input.mat-mdc-input-element,
+.mat-mdc-form-field textarea.mat-mdc-input-element {
+  color: #303030 !important;
+}
+
+.mat-mdc-form-field .mat-mdc-floating-label {
+  font-weight: 600;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+  color: #de8a00 !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  margin-top: 2px;
+}
+
 .mat-icon,
 .material-icons,
 .material-symbols-outlined {

@@ -1,8 +1,11 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { Repository } from 'typeorm';
+import { User } from '../auth/user.entity';
 import { Brand } from '../brands/entities/brand.entity';
 import { ModelEntity } from '../models/entities/model.entity';
 import { Vehicle } from '../vehicles/entities/vehicle.entity';
@@ -22,6 +25,9 @@ export class SeedService implements OnModuleInit {
   private readonly logger = new Logger(SeedService.name);
 
   constructor(
+    private readonly configService: ConfigService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Brand)
     private readonly brandRepository: Repository<Brand>,
     @InjectRepository(ModelEntity)
@@ -31,6 +37,39 @@ export class SeedService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
+    await this.seedInitialUser();
+    await this.seedVehicles();
+  }
+
+  private async seedInitialUser() {
+    const totalUsers = await this.userRepository.count();
+    if (totalUsers > 0) {
+      return;
+    }
+
+    const email =
+      this.configService.get<string>('AUTH_EMAIL') ?? 'admin@aivacol.com';
+    const plainPassword =
+      this.configService.get<string>('AUTH_PASSWORD') ?? 'aivacol@123';
+    const nickname =
+      this.configService.get<string>('AUTH_NICKNAME') ?? 'admin';
+    const name =
+      this.configService.get<string>('AUTH_NAME') ?? 'Administrador Aivacol';
+    const password = await bcrypt.hash(plainPassword, 10);
+
+    await this.userRepository.save(
+      this.userRepository.create({
+        nickname,
+        name,
+        email,
+        password,
+      }),
+    );
+
+    this.logger.log(`Usuário inicial inserido: ${email}`);
+  }
+
+  private async seedVehicles() {
     const total = await this.vehicleRepository.count();
     if (total > 0) {
       return;

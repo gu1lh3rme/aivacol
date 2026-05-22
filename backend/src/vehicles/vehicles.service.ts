@@ -1,7 +1,16 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Cache } from 'cache-manager';
+import { existsSync } from 'fs';
+import { mkdir, unlink, writeFile } from 'fs/promises';
+import { join } from 'path';
+import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { BrandsService } from '../brands/brands.service';
 import { ModelsService } from '../models/models.service';
@@ -19,6 +28,8 @@ interface VehicleFilters {
 
 @Injectable()
 export class VehiclesService {
+  private readonly uploadDir = join(process.cwd(), 'uploads', 'vehicles');
+
   constructor(
     @InjectRepository(Vehicle)
     private readonly vehicleRepository: Repository<Vehicle>,
@@ -30,10 +41,12 @@ export class VehiclesService {
   async create(dto: CreateVehicleDto) {
     const brand = await this.brandsService.findOne(dto.brandId);
     const model = await this.modelsService.findOne(dto.modelId);
+    const imageUrl = await this.prepareImageUrl(dto.imageUrl);
     const saved = await this.vehicleRepository.save(
       this.vehicleRepository.create({
         ...dto,
         plate: dto.plate.toUpperCase(),
+        imageUrl,
         brand,
         model,
       }),
@@ -101,11 +114,25 @@ export class VehiclesService {
     const model = dto.modelId
       ? await this.modelsService.findOne(dto.modelId)
       : vehicle.model;
+    const imageUrl =
+      dto.imageUrl === undefined
+        ? vehicle.imageUrl
+        : await this.prepareImageUrl(dto.imageUrl);
+
+    if (
+      dto.imageUrl !== undefined &&
+      vehicle.imageUrl &&
+      vehicle.imageUrl !== imageUrl &&
+      vehicle.imageUrl.startsWith('/uploads/')
+    ) {
+      await this.deleteLocalFile(vehicle.imageUrl);
+    }
 
     const updated = await this.vehicleRepository.save({
       ...vehicle,
       ...dto,
       plate: dto.plate ? dto.plate.toUpperCase() : vehicle.plate,
+      imageUrl,
       brand,
       model,
     });
@@ -116,8 +143,55 @@ export class VehiclesService {
 
   async remove(id: number) {
     const vehicle = await this.findOne(id);
+    if (vehicle.imageUrl?.startsWith('/uploads/')) {
+      await this.deleteLocalFile(vehicle.imageUrl);
+    }
     await this.vehicleRepository.remove(vehicle);
     await this.cacheManager.clear();
     return { deleted: true };
+  }
+
+  private async prepareImageUrl(imageUrl?: string): Promise<string | undefined> {
+    if (!imageUrl) {
+      return imageUrl;
+    }
+
+    if (!imageUrl.startsWith('data:image/')) {
+      return imageUrl;
+    }
+
+    const matches = imageUrl.match(/^data:image\/(png|jpe?g|webp|gif);base64,(.+)$/i);
+    if (!matches) {
+      throw new BadRequestException('Formato de imagem inválido');
+    }
+
+    const extension = matches[1].toLowerCase() === 'jpeg' ? 'jpg' : matches[1].toLowerCase();
+    const base64Content = matches[2];
+
+    const buffer = Buffer.from(base64Content, 'base64');
+    if (!buffer.length) {
+      throw new BadRequestException('Imagem inválida');
+    }
+
+    if (!existsSync(this.uploadDir)) {
+      await mkdir(this.uploadDir, { recursive: true });
+    }
+
+    const filename = `${randomUUID()}.${extension}`;
+    const outputPath = join(this.uploadDir, filename);
+    await writeFile(outputPath, buffer);
+
+    return `/uploads/vehicles/${filename}`;
+  }
+
+  private async deleteLocalFile(imageUrl: string) {
+    const relativePath = imageUrl.replace(/^\//, '').split('/');
+    const filePath = join(process.cwd(), ...relativePath);
+
+    try {
+      await unlink(filePath);
+    } catch {
+      // File may not exist anymore; keep delete idempotent.
+    }
   }
 }

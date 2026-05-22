@@ -21,7 +21,7 @@ describe('AuthService', () => {
   });
 
   it('should perform login', () => {
-    service.login('admin@aivacol.com', 'Aivacol@123').subscribe((response) => {
+    service.login('admin@aivacol.com', 'aivacol@123').subscribe((response) => {
       expect(response.accessToken).toBe('token');
     });
 
