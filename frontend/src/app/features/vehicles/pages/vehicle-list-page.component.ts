@@ -5,10 +5,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { debounceTime } from 'rxjs';
+import { debounceTime, finalize } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { VehiclesApiService } from '../services/vehicles-api.service';
 import { VehiclesStateService } from '../services/vehicles-state.service';
@@ -22,6 +24,7 @@ import { VehiclesStateService } from '../services/vehicles-state.service';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatDialogModule,
     MatPaginatorModule,
     MatProgressBarModule,
     MatTableModule,
@@ -35,6 +38,7 @@ export class VehicleListPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly api = inject(VehiclesApiService);
+  private readonly dialog = inject(MatDialog);
   readonly state = inject(VehiclesStateService);
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
@@ -79,20 +83,29 @@ export class VehicleListPageComponent {
   }
 
   deleteVehicle(id: number, plate: string) {
-    const confirmed = window.confirm(
-      `Deseja realmente excluir o veículo ${plate}?`,
-    );
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        width: '420px',
+        data: {
+          title: 'Excluir veículo',
+          message: `Deseja realmente excluir o veículo ${plate}? Esta ação não poderá ser desfeita.`,
+          confirmLabel: 'Excluir',
+          cancelLabel: 'Cancelar',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          return;
+        }
 
-    if (!confirmed) {
-      return;
-    }
-
-    this.loading.set(true);
-    this.api
-      .remove(id)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(() => {
-        this.state.updateFilters({ page: this.state.filters().page });
+        this.state.loading.set(true);
+        this.api
+          .remove(id)
+          .pipe(finalize(() => this.state.loading.set(false)))
+          .subscribe(() => {
+            this.state.updateFilters({ page: this.state.filters().page });
+          });
       });
   }
 }
