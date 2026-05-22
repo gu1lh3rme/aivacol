@@ -13,6 +13,8 @@ frontend/dist/
 *.db
 *.sqlite
 backend/aivacol.db
+uploads/
+backend/uploads/
 
 # logs
 npm-debug.log*
