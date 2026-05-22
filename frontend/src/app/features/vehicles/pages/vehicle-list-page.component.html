@@ -1,24 +1,122 @@
 <section class="vehicles-page" aria-label="Lista de veículos">
-  <header>
-    <h1>Veículos</h1>
-    <button mat-flat-button color="primary" (click)="goToCreate()" aria-label="Cadastrar veículo">
-      Novo Veículo
-    </button>
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Frota</p>
+      <h1>Veículos</h1>
+      <p class="subtitle">Filtre, ordene, exporte e alterne entre tabela e cartões sem perder contexto.</p>
+    </div>
+
+    <div class="header-actions">
+      <button mat-stroked-button type="button" (click)="refresh()" aria-label="Atualizar lista">
+        <mat-icon>refresh</mat-icon>
+        Atualizar
+      </button>
+      <button mat-stroked-button type="button" (click)="exportCsv()" aria-label="Exportar CSV">
+        <mat-icon>download</mat-icon>
+        CSV
+      </button>
+      <button mat-flat-button color="primary" (click)="goToCreate()" aria-label="Cadastrar veículo">
+        <mat-icon>add</mat-icon>
+        Novo Veículo
+      </button>
+    </div>
   </header>
 
+  <section class="insight-strip" aria-label="Resumo da frota">
+    <mat-card>
+      <strong>{{ state.total() }}</strong>
+      <span>Resultados filtrados</span>
+    </mat-card>
+    <mat-card>
+      <strong>{{ state.brands().length }}</strong>
+      <span>Marcas carregadas</span>
+    </mat-card>
+    <mat-card>
+      <strong>{{ state.availableModels().length }}</strong>
+      <span>Modelos disponíveis</span>
+    </mat-card>
+    <mat-card>
+      <strong>{{ state.viewMode() === 'table' ? 'Tabela' : 'Cards' }}</strong>
+      <span>Modo de exibição</span>
+    </mat-card>
+  </section>
+
   <form [formGroup]="filtersForm" class="filters" aria-label="Filtros de veículos">
-    <mat-form-field appearance="outline">
-      <mat-label>Placa</mat-label>
-      <input matInput formControlName="plate" />
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Busca rápida</mat-label>
+      <input matInput formControlName="search" placeholder="Placa, marca, modelo, cor ou ano" />
+      <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Marca</mat-label>
-      <input matInput formControlName="brand" />
+      <mat-select formControlName="brandId">
+        <mat-option [value]="null">Todas</mat-option>
+        @for (brand of brandOptions(); track brand.id) {
+          <mat-option [value]="brand.id">{{ brand.name }}</mat-option>
+        }
+      </mat-select>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
       <mat-label>Modelo</mat-label>
-      <input matInput formControlName="model" />
+      <mat-select formControlName="modelId">
+        <mat-option [value]="null">Todos</mat-option>
+        @for (model of modelOptions(); track model.id) {
+          <mat-option [value]="model.id">{{ model.name }}</mat-option>
+        }
+      </mat-select>
     </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ano</mat-label>
+      <input matInput type="number" formControlName="year" placeholder="Ex.: 2023" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="all">Todos</mat-option>
+        <mat-option value="available">Operando</mat-option>
+        <mat-option value="maintenance">Revisão</mat-option>
+        <mat-option value="archived">Reserva</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ordenar por</mat-label>
+      <mat-select formControlName="sortBy">
+        <mat-option value="plate">Placa</mat-option>
+        <mat-option value="brand">Marca</mat-option>
+        <mat-option value="model">Modelo</mat-option>
+        <mat-option value="year">Ano</mat-option>
+        <mat-option value="mileage">Quilometragem</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Direção</mat-label>
+      <mat-select formControlName="sortDirection">
+        <mat-option value="asc">Crescente</mat-option>
+        <mat-option value="desc">Decrescente</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="filters-actions">
+      <button mat-stroked-button type="button" (click)="clearFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Limpar
+      </button>
+
+      <mat-button-toggle-group [value]="state.viewMode()" (valueChange)="toggleView($event)" aria-label="Modo de visualização">
+        <mat-button-toggle value="table">
+          <mat-icon>table_rows</mat-icon>
+        </mat-button-toggle>
+        <mat-button-toggle value="cards">
+          <mat-icon>grid_view</mat-icon>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
   </form>
 
   @if (state.loading()) {
@@ -26,8 +124,9 @@
   }
 
   @if (state.hasData()) {
-    <section class="table-shell" aria-label="Tabela de veículos">
-      <table mat-table [dataSource]="dataSource" class="vehicles-table">
+    @if (state.viewMode() === 'table') {
+      <section class="table-shell" aria-label="Tabela de veículos">
+        <table mat-table [dataSource]="state.pagedVehicles()" class="vehicles-table">
         <ng-container matColumnDef="plate">
           <th mat-header-cell *matHeaderCellDef>Placa</th>
           <td mat-cell *matCellDef="let row" class="plate-cell">
@@ -50,6 +149,20 @@
           <td mat-cell *matCellDef="let row">{{ row.year }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="mileage">
+          <th mat-header-cell *matHeaderCellDef>Km</th>
+          <td mat-cell *matCellDef="let row">{{ formatMileage(row.mileage) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="status-pill" [class]="statusClass(state.resolveStatus(row))">
+              {{ formatStatus(state.resolveStatus(row)) }}
+            </span>
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Ações</th>
           <td mat-cell *matCellDef="let row" class="actions-cell">
@@ -64,17 +177,75 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
+        </table>
 
-      <mat-paginator
-        [length]="state.total()"
-        [pageSize]="state.filters().pageSize"
-        [pageSizeOptions]="[5, 10, 20]"
-        (page)="changePage($event)"
-        aria-label="Paginação da tabela"
-      />
-    </section>
+        <mat-paginator
+          [length]="state.total()"
+          [pageIndex]="state.filters().page - 1"
+          [pageSize]="state.filters().pageSize"
+          [pageSizeOptions]="[4, 8, 12, 20]"
+          (page)="changePage($event)"
+          aria-label="Paginação da tabela"
+        />
+      </section>
+    } @else {
+      <section class="cards-shell" aria-label="Cards de veículos">
+        @for (row of state.pagedVehicles(); track row.id) {
+          <mat-card class="vehicle-card">
+            <div class="vehicle-card__top">
+              <div>
+                <p class="plate-badge">{{ row.plate }}</p>
+                <h2>{{ row.brand?.name || 'Marca indisponível' }}</h2>
+                <p>{{ row.model?.name || 'Modelo indisponível' }}</p>
+              </div>
+              <span class="status-pill" [class]="statusClass(state.resolveStatus(row))">
+                {{ formatStatus(state.resolveStatus(row)) }}
+              </span>
+            </div>
+
+            <dl class="vehicle-meta">
+              <div>
+                <dt>Ano</dt>
+                <dd>{{ row.year }}</dd>
+              </div>
+              <div>
+                <dt>Km</dt>
+                <dd>{{ formatMileage(row.mileage) }}</dd>
+              </div>
+              <div>
+                <dt>Cor</dt>
+                <dd>{{ row.color }}</dd>
+              </div>
+            </dl>
+
+            <div class="card-actions">
+              <button mat-stroked-button type="button" (click)="editVehicle(row.id)">
+                <mat-icon>edit</mat-icon>
+                Editar
+              </button>
+              <button mat-button type="button" (click)="deleteVehicle(row.id, row.plate)">
+                <mat-icon>delete</mat-icon>
+                Excluir
+              </button>
+            </div>
+          </mat-card>
+        }
+
+        <mat-paginator
+          [length]="state.total()"
+          [pageIndex]="state.filters().page - 1"
+          [pageSize]="state.filters().pageSize"
+          [pageSizeOptions]="[4, 8, 12, 20]"
+          (page)="changePage($event)"
+          aria-label="Paginação dos cards"
+        />
+      </section>
+    }
   } @else {
-    <app-empty-state message="Nenhum veículo encontrado com os filtros informados." />
+    <app-empty-state
+      message="Nenhum veículo encontrado com os filtros informados."
+      title="A lista está vazia"
+      icon="directions_car"
+    />
   }
 </section>

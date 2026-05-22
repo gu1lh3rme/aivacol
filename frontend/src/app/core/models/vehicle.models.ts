@@ -3,11 +3,22 @@ export interface Brand {
   name: string;
 }
 
+export interface BrandPayload {
+  name: string;
+}
+
 export interface VehicleModel {
   id: number;
   name: string;
   brandId: number;
 }
+
+export interface VehicleModelPayload {
+  name: string;
+  brandId: number;
+}
+
+export type VehicleStatus = 'available' | 'maintenance' | 'archived';
 
 export interface Vehicle {
   id: number;

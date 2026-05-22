@@ -21,6 +21,15 @@ export const routes: Routes = [
         path: 'vehicles',
         loadChildren: () => import('./features/vehicles/vehicles.routes').then((m) => m.VEHICLE_ROUTES),
       },
+      {
+        path: 'catalog',
+        loadChildren: () => import('./features/catalog/catalog.routes').then((m) => m.CATALOG_ROUTES),
+      },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./features/history/pages/history-page.component').then((m) => m.HistoryPageComponent),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

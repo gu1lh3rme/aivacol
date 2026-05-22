@@ -1,42 +1,74 @@
 <section class="home-page" aria-label="Dashboard inicial da plataforma">
   <header class="hero">
-    <p class="eyebrow">Visão Geral</p>
-    <h1>Dashboard da Plataforma</h1>
-    <p>Acompanhe indicadores essenciais da operação em tempo real.</p>
+    <div>
+      <p class="eyebrow">Visão Geral</p>
+      <h1>Dashboard da Frota</h1>
+      <p>Acompanhe a operação com cards, distribuição por marca e leitura rápida de tendências.</p>
+    </div>
+
+    <a mat-flat-button color="primary" routerLink="/vehicles">
+      <mat-icon>directions_car</mat-icon>
+      Ver frota
+    </a>
   </header>
 
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" aria-label="Carregando dashboard"></mat-progress-bar>
+  }
+
   <div class="kpi-grid">
-    @for (card of cards; track card.title) {
+    @for (card of kpis(); track card.title) {
       <mat-card class="kpi-card">
         <mat-icon>{{ card.icon }}</mat-icon>
         <h2>{{ card.value }}</h2>
         <p>{{ card.title }}</p>
-        <small>{{ card.trend }}</small>
       </mat-card>
     }
   </div>
 
   <div class="insights-grid">
-    <mat-card>
-      <h3>Saúde por Área</h3>
-      @for (item of healthByArea; track item.area) {
-        <div class="progress-item">
-          <div>
-            <strong>{{ item.area }}</strong>
-            <span>{{ item.value }}%</span>
+    <mat-card class="chart-card">
+      <h3>Veículos por Marca</h3>
+      <div class="bar-chart">
+        @for (item of topBrands(); track item.label) {
+          <div class="bar-row">
+            <div class="bar-meta">
+              <strong>{{ item.label }}</strong>
+              <span>{{ item.value }}</span>
+            </div>
+            <div class="bar-track">
+              <span class="bar-fill" [style.width.%]="percentage(item.value, totalVehicles())"></span>
+            </div>
           </div>
-          <mat-progress-bar [value]="item.value" mode="determinate" />
-        </div>
-      }
+        }
+      </div>
     </mat-card>
 
-    <mat-card>
-      <h3>Resumo Diário</h3>
-      <ul>
-        <li>6 solicitações de veículos aprovadas hoje.</li>
-        <li>2 checklists de inspeção pendentes até 18:00.</li>
-        <li>1 alerta de revisão programada para amanhã.</li>
-      </ul>
+    <mat-card class="chart-card">
+      <h3>Frota por Ano</h3>
+      <div class="bar-chart year-chart">
+        @for (item of yearDistribution(); track item.label) {
+          <div class="bar-row">
+            <div class="bar-meta">
+              <strong>{{ item.label }}</strong>
+              <span>{{ item.value }}</span>
+            </div>
+            <div class="bar-track">
+              <span class="bar-fill" [style.width.%]="percentage(item.value, totalVehicles())"></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="summary-list">
+        <h4>Últimos registros</h4>
+        @for (vehicle of recentVehicles(); track vehicle.id) {
+          <div class="summary-item">
+            <strong>{{ vehicle.plate }}</strong>
+            <span>{{ vehicle.brand?.name }} · {{ vehicle.model?.name }} · {{ vehicle.year }}</span>
+          </div>
+        }
+      </div>
     </mat-card>
   </div>
 </section>

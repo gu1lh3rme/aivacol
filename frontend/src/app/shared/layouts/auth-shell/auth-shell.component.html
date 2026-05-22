@@ -24,6 +24,16 @@
         <mat-icon matListItemIcon>directions_car</mat-icon>
         <span matListItemTitle>Veículos</span>
       </a>
+
+      <a mat-list-item routerLink="/catalog" routerLinkActive="active-link" (click)="closeIfMobile(sidenav)">
+        <mat-icon matListItemIcon>dns</mat-icon>
+        <span matListItemTitle>Catálogo</span>
+      </a>
+
+      <a mat-list-item routerLink="/history" routerLinkActive="active-link" (click)="closeIfMobile(sidenav)">
+        <mat-icon matListItemIcon>history</mat-icon>
+        <span matListItemTitle>Histórico</span>
+      </a>
     </mat-nav-list>
 
     <button mat-stroked-button class="logout-button" type="button" (click)="logout()">

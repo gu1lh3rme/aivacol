@@ -1,25 +1,85 @@
 .vehicles-page {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 
-  header {
+  .page-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: end;
+    gap: 16px;
 
     h1 {
       margin: 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #c07a00;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: #595959;
+      max-width: 760px;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  }
+
+  .insight-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+
+    mat-card {
+      padding: 14px 16px;
+      background: linear-gradient(180deg, #fffefb 0%, #fff7e9 100%);
+      border: 1px solid rgba(255, 159, 28, 0.16);
+      display: grid;
+      gap: 4px;
+
+      strong {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.4rem;
+      }
+
+      span {
+        color: #6a6a6a;
+      }
     }
   }
 
   .filters {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     gap: 12px;
-    padding: 12px;
-    border-radius: 16px;
-    background: #fffaf0;
-    border: 1px solid rgba(255, 159, 28, 0.2);
+    padding: 16px;
+    border-radius: 18px;
+    background: rgba(255, 250, 240, 0.88);
+    border: 1px solid rgba(255, 159, 28, 0.18);
+    backdrop-filter: blur(10px);
+
+    .search-field {
+      grid-column: span 2;
+    }
+
+    .filters-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      grid-column: 1 / -1;
+      flex-wrap: wrap;
+    }
   }
 
   .table-shell {
@@ -86,6 +146,104 @@
     }
   }
 
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .status-available {
+    background: #ddf7e7;
+    color: #137a3d;
+  }
+
+  .status-maintenance {
+    background: #fff2cc;
+    color: #9b6400;
+  }
+
+  .status-archived {
+    background: #ececec;
+    color: #5d5d5d;
+  }
+
+  .cards-shell {
+    display: grid;
+    gap: 14px;
+
+    .vehicle-card {
+      padding: 18px;
+      border: 1px solid rgba(255, 159, 28, 0.16);
+      background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+      box-shadow: 0 12px 24px rgba(38, 38, 38, 0.06);
+    }
+
+    .vehicle-card__top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .plate-badge {
+      display: inline-flex;
+      margin: 0 0 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #262626;
+      color: #fff2c6;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: #666;
+    }
+
+    .vehicle-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0 0;
+
+      div {
+        padding: 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      dt {
+        color: #7b7b7b;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+      }
+
+      dd {
+        margin: 6px 0 0;
+        font-weight: 700;
+      }
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+  }
+
   mat-paginator {
     border-top: 1px solid rgba(255, 159, 28, 0.16);
     background: #fffdf8;
@@ -94,12 +252,30 @@
 
 @media (max-width: 760px) {
   .vehicles-page {
+    .page-header,
+    .page-header .header-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .insight-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filters .search-field {
+      grid-column: span 1;
+    }
+
     .table-shell {
       overflow-x: auto;
     }
 
     .vehicles-table {
       min-width: 680px;
+    }
+
+    .cards-shell .vehicle-meta {
+      grid-template-columns: 1fr;
     }
   }
 }
