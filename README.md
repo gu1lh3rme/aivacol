@@ -1,95 +1,59 @@
-# Aivacol - Plataforma de Gestão de Frota
+# Aivacol - Plataforma de Gestao de Frota
 
-Projeto full stack com **frontend Angular 19 (standalone + signals)** e **backend NestJS 11 (TypeORM + JWT + Redis cache)** para gestão de veículos.
+Projeto full stack com frontend em Angular 19 e backend em NestJS 11 para gestao de veiculos.
 
 ## Estrutura
 
 ```text
 /aivacol/
-├── backend/                # API NestJS
-├── frontend/               # Aplicação Angular
-├── seed_vehicles.json      # Base inicial de veículos
-├── docker-compose.yml      # Redis + backend + frontend
-└── README.md
+|- backend/                # API NestJS
+|- frontend/               # Aplicacao Angular
+|- seed_vehicles.json      # Base inicial de veiculos
+|- docker-compose.yml      # SQL Server + Redis + backend + frontend
+`- README.md
 ```
 
-## Tecnologias
+## Stack
 
 ### Frontend
-- Angular 19 standalone
+- Angular 19 (standalone)
 - Signals + RxJS
-- Angular Router com lazy loading
-- HttpClient + interceptor JWT com refresh
-- Reactive Forms
 - Angular Material
+- Interceptor JWT com refresh automatico
 
 ### Backend
 - NestJS 11
 - TypeORM + SQL Server
 - JWT (access + refresh)
-- Redis (cache de listagem de veículos)
-- DTOs com class-validator
+- Cache em memoria ou Redis
+- Swagger em `/docs`
 
-## Funcionalidades implementadas
+## Pre-requisitos
 
-- Login robusto com formulário reativo, loading, erro e remember me
-- Guard funcional para rotas privadas
-- Interceptor JWT com refresh token automático em `401`
-- CRUD de marcas, modelos e veículos
-- Rotas protegidas por JWT (exceto `/auth/login` e `/auth/refresh`)
-- Listagem de veículos com:
-  - tabela responsiva (Material Table)
-  - filtros (placa, marca, modelo)
-  - paginação
-  - loading state e estado vazio
-- Cadastro/edição de veículo com:
-  - validações fortes
-  - dropdown encadeado (marca -> modelo)
-  - upload opcional com preview
-  - confirmação ao cancelar com alterações
-- Seed automática via `seed_vehicles.json`
-
-## Como rodar localmente
-
-### Pré-requisitos
 - Node.js 20+
 - npm 10+
-- SQL Server local (SQLEXPRESS)
+- SQL Server disponivel (local ou Docker)
+- Docker + Docker Compose (opcional, para stack conteinerizada)
 
-### 1) Backend
+## Configuracao do Backend
 
-```bash
-cd /home/runner/work/aivacol/aivacol/backend
-cp .env.example .env
-npm install
-npm run start:dev
+1. Entre na pasta do backend.
+2. Crie o arquivo `.env` a partir do exemplo.
+3. Ajuste os valores de banco e credenciais conforme seu ambiente.
+
+PowerShell (Windows):
+
+```powershell
+cd backend
+Copy-Item .env.example .env
 ```
 
-API: `http://localhost:3000`
-Swagger: `http://localhost:3000/docs`
-
-Credenciais padrão:
-- email: `admin@aivacol.com`
-- senha: `aivacol@123`
-
-### 2) Frontend
-
-```bash
-cd /home/runner/work/aivacol/aivacol/frontend
-npm install
-npm start
-```
-
-App: `http://localhost:4200`
-
-## Variáveis de ambiente
-
-Arquivo: `backend/.env`
+Exemplo de `backend/.env`:
 
 ```env
 PORT=3000
 DB_HOST=localhost
-# Optional. Leave empty when connecting by fixed TCP port.
+# Opcional. Deixe vazio quando conectar por porta TCP fixa.
 DB_INSTANCE=
 DB_PORT=1433
 DB_USERNAME=sa
@@ -99,54 +63,105 @@ JWT_SECRET=access_secret
 JWT_REFRESH_SECRET=refresh_secret
 AUTH_EMAIL=admin@aivacol.com
 AUTH_PASSWORD=aivacol@123
+AUTH_NICKNAME=admin
+AUTH_NAME=Administrador Aivacol
 CACHE_DRIVER=memory
-# Production only (Redis)
+# Usado apenas quando CACHE_DRIVER=redis
 REDIS_HOST=localhost
 REDIS_PORT=6379
 ```
 
-## Docker (bônus)
+## Execucao Local (Recomendado para desenvolvimento)
+
+### 1) Subir o backend
 
 ```bash
-cd /home/runner/work/aivacol/aivacol
+cd backend
+npm install
+npm run start:dev
+```
+
+Backend disponivel em:
+- API: http://localhost:3000
+- Swagger: http://localhost:3000/docs
+
+### 2) Subir o frontend
+
+Em outro terminal:
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Frontend disponivel em:
+- App: http://localhost:4200
+
+## Execucao com Docker Compose (stack completa)
+
+Na raiz do projeto:
+
+```bash
 docker compose up --build
 ```
 
-Serviços:
-- Frontend: `http://localhost:4200`
-- Backend: `http://localhost:3000`
-- SQL Server: `localhost:1433`
-- Redis: `localhost:6379`
+Servicos:
+- Frontend: http://localhost:4200
+- Backend: http://localhost:3000
+- SQL Server: localhost:1433
+- Redis: localhost:6379
 
-## Testes e qualidade
+Observacao importante sobre seed no Docker:
+- O backend procura o arquivo de seed em `/seed_vehicles.json`.
+- No `docker-compose.yml` atual, esse arquivo nao esta montado no container do backend.
+- Para garantir seed automatica via Docker, adicione no servico `backend`:
+
+```yaml
+volumes:
+  - ./seed_vehicles.json:/seed_vehicles.json:ro
+```
+
+## Como funciona o Seed
+
+O seed e executado automaticamente na inicializacao do backend (via `SeedService`).
+
+Regras:
+- Usuario inicial: so e criado se a tabela de usuarios estiver vazia.
+- Veiculos/marcas/modelos: so sao importados se a tabela de veiculos estiver vazia.
+- Fonte dos dados: arquivo `seed_vehicles.json` na raiz do projeto.
+
+Credenciais padrao do usuario inicial:
+- Email: `admin@aivacol.com`
+- Senha: `aivacol@123`
+
+Importante:
+- O seed e idempotente no primeiro nivel: se ja houver registros, ele nao reinsere dados.
+- Para reexecutar seed completo, limpe as tabelas (ou recrie o banco) e reinicie o backend.
+
+## Testes e Qualidade
 
 Backend:
+
 ```bash
 cd backend
 npm run lint
 npm run test
+npm run test:e2e
 npm run build
 ```
 
 Frontend:
+
 ```bash
 cd frontend
 npm run build
 npm run test -- --watch=false --browsers=ChromeHeadless
 ```
 
-## Decisões técnicas
+## Endpoints de autenticacao
 
-- **Angular standalone + signals** para reduzir boilerplate e melhorar reatividade local.
-- **State por service + signals** no frontend para simplicidade e boa escalabilidade por feature.
-- **JWT com refresh token** no backend e renovação automática no interceptor para UX contínua.
-- **Cache Redis** na listagem de veículos para reduzir custo de consultas repetidas.
-- **TypeORM com SQL Server** para manter compatibilidade com ambientes corporativos e cenários de produção.
+- `POST /auth/login`
+- `POST /auth/refresh`
 
-## Melhorias futuras
-
-- Upload real de imagem (S3/Cloudinary) em vez de base64.
-- Testes E2E com Cypress/Playwright.
-- Observabilidade (logs estruturados + tracing).
-- Paginação e filtros avançados no backend com índices dedicados.
-- RBAC com perfis de usuário.
+As demais rotas de negocio exigem token JWT.
