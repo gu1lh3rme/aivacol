@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { finalize } from 'rxjs';
 import { Brand, VehicleModel } from '../../../core/models/vehicle.models';
 import { VehiclesApiService } from '../services/vehicles-api.service';
+import { VehiclesStateService } from '../services/vehicles-state.service';
 
 @Component({
   selector: 'app-vehicle-form-page',
@@ -28,6 +29,7 @@ import { VehiclesApiService } from '../services/vehicles-api.service';
 export class VehicleFormPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly api = inject(VehiclesApiService);
+  private readonly vehiclesState = inject(VehiclesStateService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -114,7 +116,9 @@ export class VehicleFormPageComponent {
 
     const request$ = vehicleId ? this.api.update(vehicleId, payload) : this.api.create(payload);
     request$.pipe(finalize(() => this.loading.set(false))).subscribe(() => {
-      void this.router.navigate(['/vehicles']);
+      void this.vehiclesState.bootstrap().then(() => {
+        void this.router.navigate(['/vehicles']);
+      });
     });
   }
 }
